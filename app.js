@@ -4,6 +4,7 @@ const fs = require('fs');
 const multer = require('multer');
 const readline = require('readline');
 const { type } = require('os');
+const engines = require('consolidate');
 const app = express();
 
 // MySQL 데이터베이스 연결 설정
@@ -36,6 +37,9 @@ const upload = multer({ storage: storage})
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/uploadfile.html');
 });
+
+app.engine('html', engines.mustache);
+app.set('view engine', 'html');
 
 let table_number = 0
 
@@ -83,23 +87,23 @@ app.post('/upload', upload.single('Uploadfile'), (req, res) => {
 
       var sql = `
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=1
-      UNION
+      UNION ALL
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=2
-      UNION
+      UNION ALL
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=3
-      UNION
+      UNION ALL
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=4
-      UNION
+      UNION ALL
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=5
-      UNION
+      UNION ALL
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=1
-      UNION
+      UNION ALL 
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=2
-      UNION
+      UNION ALL
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=3
-      UNION
+      UNION ALL
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=4
-      UNION
+      UNION ALL
       SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=5`;
 
       connection.query(sql, (err, results) => {
@@ -107,8 +111,7 @@ app.post('/upload', upload.single('Uploadfile'), (req, res) => {
           console.error('MySQL 쿼리 오류:', err);
           return;
         }
-        // console.log(results);
-        // console.log(results.length);
+
         const maxNumber = []
         const minNumber = []
         const avgNumber = []
@@ -118,10 +121,8 @@ app.post('/upload', upload.single('Uploadfile'), (req, res) => {
           minNumber.push(results[i].minnum);
           avgNumber.push(results[i].avgnum);
         }
-        // console.log(maxNumber);
-        // console.log(minNumber);
-        // console.log(avgNumber);
-        // res.render(show_graph.html, {maxNumber, minNumber, avgNumber});
+
+        res.render('show_graph.html', { maxNumber: JSON.stringify(maxNumber), minNumber: JSON.stringify(minNumber), avgNumber: JSON.stringify(avgNumber) });
       });
     });
 });
