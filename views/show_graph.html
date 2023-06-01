@@ -28,6 +28,7 @@
     var maxNumber = JSON.parse(`{{maxNumber}}`);
     var minNumber = JSON.parse(`{{minNumber}}`);
     var avgNumber = JSON.parse(`{{avgNumber}}`);
+    var stdNumber = JSON.parse(`{{stdNumber}}`);
 
     function showTaskGraph(n) {
       var data = [];
@@ -35,24 +36,31 @@
       var maxData = maxNumber.slice((n - 1) * 5, (n * 5));
       var minData = minNumber.slice((n - 1) * 5, (n * 5));
       var avgData = avgNumber.slice((n - 1) * 5, (n * 5));
+      var stdData = stdNumber.slice((n - 1) * 5, (n * 5));
       
       data.push({
         x: cores, 
         y: maxData,
         mode: 'lines', 
-        name: 'Max Number'
+        name: 'MAX number'
       });
       data.push({
         x: cores,
         y: minData,
         mode: 'lines', 
-        name: 'Min Number'
+        name: 'MIN number'
       });
       data.push({
         x: cores, 
         y: avgData,
         mode: 'lines', 
-        name: 'AVG Number'
+        name: 'AVG number'
+      });
+      data.push({
+        x: cores,
+        y: stdData,
+        mode: 'lines', 
+        mane: 'STD number'
       });
 
       var layout = {
@@ -71,24 +79,31 @@
       var maxData = maxNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
       var minData = minNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
       var avgData = avgNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
+      var stdData = avgNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
 
       data.push({
         x: tasks, 
         y: maxData,
         mode: 'lines', 
-        name: 'Max Number'
+        name: 'MAX number'
       });
       data.push({
         x: tasks,
         y: minData,
         mode: 'lines', 
-        name: 'Min Number'
+        name: 'MIN number'
       });
       data.push({
         x: tasks, 
         y: avgData,
         mode: 'lines', 
-        name: 'AVG Number'
+        name: 'AVG number'
+      });
+      data.push({
+        x: tasks,
+        y: stdData,
+        MODE: 'lines',
+        name: 'STD number'
       });
 
       var layout = {
