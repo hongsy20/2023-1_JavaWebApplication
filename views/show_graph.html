@@ -9,17 +9,22 @@
 <body>
   <div>
     <h1>Show Graph</h1>
+    <p><b>작업(task)단위</b></p>
     <button onclick="showTaskGraph(1)">Task1</button>
     <button onclick="showTaskGraph(2)">Task2</button>
     <button onclick="showTaskGraph(3)">Task3</button>
     <button onclick="showTaskGraph(4)">Task4</button>
     <button onclick="showTaskGraph(5)">Task5</button>
-    <br><br>
+    <br>
+    <p><b>코어(core)단위</b></p>
     <button onclick="showCoreGraph(1)">Core1</button>
     <button onclick="showCoreGraph(2)">Core2</button>
     <button onclick="showCoreGraph(3)">Core3</button>
     <button onclick="showCoreGraph(4)">Core4</button>
     <button onclick="showCoreGraph(5)">Core5</button>
+    <p><b>그래프</b></p>
+    <button onclick="changeGraph('bar')">Bar</button>
+    <button onclick="changeGraph('line')">Line</button>
   </div>
   
   <div id="graph"></div>
@@ -30,6 +35,8 @@
     var avgNumber = JSON.parse(`{{avgNumber}}`);
     var stdNumber = JSON.parse(`{{stdNumber}}`);
 
+    var graphshape = 'line';
+
     function showTaskGraph(n) {
       var data = [];
       var cores = ['Core1', 'Core2', 'Core3', 'Core4', 'Core5'];
@@ -37,37 +44,34 @@
       var minData = minNumber.slice((n - 1) * 5, (n * 5));
       var avgData = avgNumber.slice((n - 1) * 5, (n * 5));
       var stdData = stdNumber.slice((n - 1) * 5, (n * 5));
-      
+
       data.push({
         x: cores, 
         y: maxData,
-        mode: 'lines', 
+        type: graphshape, 
         name: 'MAX number'
       });
       data.push({
         x: cores,
         y: minData,
-        mode: 'lines', 
+        type: graphshape, 
         name: 'MIN number'
       });
       data.push({
         x: cores, 
         y: avgData,
-        mode: 'lines', 
+        type: graphshape, 
         name: 'AVG number'
       });
       data.push({
         x: cores,
         y: stdData,
-        mode: 'lines', 
-        mane: 'STD number'
+        type: graphshape, 
+        name: 'STD number'
       });
 
       var layout = {
-        title: 'Task' + n + '의 Core 수행',
-        yaxis: {
-          range: [0, Math.max(...maxNumber, ...minNumber, ...avgNumber)]
-        }
+        title: 'Task' + n + '의 Core 수행'
       };
       
       Plotly.newPlot('graph', data, layout);
@@ -79,41 +83,48 @@
       var maxData = maxNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
       var minData = minNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
       var avgData = avgNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
-      var stdData = avgNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
+      var stdData = stdNumber.slice((n - 1) * 5 + 25, (n * 5) + 25);
 
       data.push({
         x: tasks, 
         y: maxData,
-        mode: 'lines', 
+        type: graphshape, 
         name: 'MAX number'
       });
       data.push({
         x: tasks,
         y: minData,
-        mode: 'lines', 
+        type: graphshape, 
         name: 'MIN number'
       });
       data.push({
         x: tasks, 
         y: avgData,
-        mode: 'lines', 
+        type: graphshape, 
         name: 'AVG number'
       });
       data.push({
-        x: tasks,
+        x: tasks, 
         y: stdData,
-        MODE: 'lines',
+        type: graphshape, 
         name: 'STD number'
       });
 
       var layout = {
-        title: 'Core' + n + '의 Task 수행',
-        yaxis: {
-          range: [0, Math.max(...maxNumber, ...minNumber, ...avgNumber)]
-        }
+        title: 'Core' + n + '의 Task 수행'
       };
       
       Plotly.newPlot('graph', data, layout);
+    }
+
+    function changeGraph(type) {
+      graphshape = type;
+
+      var update = {
+        type: graphshape
+      }
+
+      Plotly.update('graph', update);
     }
   </script>
 </body>
