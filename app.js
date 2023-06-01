@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   }
 });
-const upload = multer({ storage: storage})
+const upload = multer({ storage: storage })
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/uploadfile.html');
@@ -86,25 +86,25 @@ app.post('/upload', upload.single('Uploadfile'), (req, res) => {
       console.log('파일 읽기 성공');
 
       var sql = `
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=1
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=1
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=2
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=2
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=3
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=3
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=4
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=4
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE taskNumber=5
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=5
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=1
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=1
       UNION ALL 
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=2
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=2
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=3
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=3
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=4
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=4
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum FROM t_score WHERE coreNumber=5`;
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=5`;
 
       connection.query(sql, (err, results) => {
         if (err) {
@@ -115,14 +115,16 @@ app.post('/upload', upload.single('Uploadfile'), (req, res) => {
         const maxNumber = []
         const minNumber = []
         const avgNumber = []
+        const stdNumber = []
 
         for(let i = 0; i < results.length; i++) {
           maxNumber.push(results[i].maxnum);
           minNumber.push(results[i].minnum);
           avgNumber.push(results[i].avgnum);
+          stdNumber.push(results[i].stdnum)
         }
 
-        res.render('show_graph.html', { maxNumber: JSON.stringify(maxNumber), minNumber: JSON.stringify(minNumber), avgNumber: JSON.stringify(avgNumber) });
+        res.render('show_graph.html', { maxNumber: JSON.stringify(maxNumber), minNumber: JSON.stringify(minNumber), avgNumber: JSON.stringify(avgNumber), stdNumber: JSON.stringify(stdNumber) });
       });
     });
 });
