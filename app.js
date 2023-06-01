@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   }
 });
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage})
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/uploadfile.html');
@@ -77,41 +77,41 @@ app.post('/upload', upload.single('Uploadfile'), (req, res) => {
           console.error('MySQL 삽입 실패 : ', err);
           return;
         }
-        // console.log('데이터 저장 성공')
       })
     }
     });
 
     reader.on('close', () => {
       console.log('파일 읽기 성공');
-
+      
       var sql = `
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=1
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=1 GROUP BY coreNumber
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=2
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=2 GROUP BY coreNumber
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=3
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=3 GROUP BY coreNumber
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=4
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=4 GROUP BY coreNumber
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=5
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE taskNumber=5 GROUP BY coreNumber
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=1
-      UNION ALL 
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=2
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=1 GROUP BY taskNumber
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=3
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=2 GROUP BY taskNumber
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=4
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=3 GROUP BY taskNumber
       UNION ALL
-      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=5`;
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=4 GROUP BY taskNumber
+      UNION ALL
+      SELECT MAX(valueNumber) AS maxnum, MIN(valueNumber) AS minnum, AVG(valueNumber) AS avgnum, STD(valueNumber) AS stdnum FROM t_score WHERE coreNumber=5 GROUP BY taskNumber`;
 
       connection.query(sql, (err, results) => {
         if (err) {
           console.error('MySQL 쿼리 오류:', err);
           return;
         }
-
+        console.log(results);
+        console.log(results.length);
         const maxNumber = []
         const minNumber = []
         const avgNumber = []
@@ -121,7 +121,7 @@ app.post('/upload', upload.single('Uploadfile'), (req, res) => {
           maxNumber.push(results[i].maxnum);
           minNumber.push(results[i].minnum);
           avgNumber.push(results[i].avgnum);
-          stdNumber.push(results[i].stdnum)
+          stdNumber.push(results[i].stdnum);
         }
 
         res.render('show_graph.html', { maxNumber: JSON.stringify(maxNumber), minNumber: JSON.stringify(minNumber), avgNumber: JSON.stringify(avgNumber), stdNumber: JSON.stringify(stdNumber) });
